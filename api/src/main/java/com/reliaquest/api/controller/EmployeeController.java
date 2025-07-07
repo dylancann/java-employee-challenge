@@ -20,19 +20,32 @@ public class EmployeeController implements IEmployeeController<Employee, CreateE
     @Override
     public ResponseEntity<List<Employee>> getAllEmployees() {
         List<Employee> employees = employeeService.getAllEmployees();
+        if (employees == null || employees.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(employees);
     }
 
     @Override
     public ResponseEntity<List<Employee>> getEmployeesByNameSearch(String searchString) {
         List<Employee> employees = employeeService.getEmployeesByNameSearch(searchString);
+        if (employees == null || employees.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(employees);
     }
 
+
     @Override
     public ResponseEntity<Employee> getEmployeeById(String id) {
-        return null;
+        Employee employee = employeeService.getEmployeeById(id);
+        if (employee != null) {
+            return ResponseEntity.ok(employee);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
+
 
     @Override
     public ResponseEntity<Integer> getHighestSalaryOfEmployees() {

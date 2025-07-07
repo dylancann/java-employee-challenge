@@ -43,7 +43,8 @@ public class EmployeeService {
     public List<Employee> getAllEmployees() {
         List<Employee> employees = getDataFromApi(
                 BASE_URL,
-                new ParameterizedTypeReference<ApiResponse<List<Employee>>>() {}
+                new ParameterizedTypeReference<ApiResponse<List<Employee>>>() {
+                }
         );
         if (employees == null || employees.isEmpty()) {
             log.warn("No employees found from API at URL: {}", BASE_URL);
@@ -71,5 +72,25 @@ public class EmployeeService {
 
         return filtered;
     }
+
+    public Employee getEmployeeById(String id) {
+        String url = BASE_URL + "/" + id;
+
+        try {
+            Employee employee = getDataFromApi(
+                    url,
+                    new ParameterizedTypeReference<ApiResponse<Employee>>() {
+                    }
+            );
+            if (employee == null) {
+                log.warn("Employee with ID {} not found.", id);
+            }
+            return employee;
+        } catch (Exception e) {
+            log.error("Error fetching employee with ID {}: {}", id, e.getMessage());
+            throw e;
+        }
+    }
 }
+
 
