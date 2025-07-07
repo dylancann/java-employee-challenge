@@ -3,13 +3,12 @@ package com.reliaquest.api.controller;
 import com.reliaquest.api.model.CreateEmployeeInput;
 import com.reliaquest.api.model.Employee;
 import com.reliaquest.api.service.EmployeeService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/employee")
@@ -35,7 +34,6 @@ public class EmployeeController implements IEmployeeController<Employee, CreateE
         }
         return ResponseEntity.ok(employees);
     }
-
 
     @Override
     public ResponseEntity<Employee> getEmployeeById(String id) {
@@ -82,4 +80,3 @@ public class EmployeeController implements IEmployeeController<Employee, CreateE
         }
     }
 }
-

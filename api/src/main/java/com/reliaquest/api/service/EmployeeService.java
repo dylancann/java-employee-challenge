@@ -4,19 +4,17 @@ import com.reliaquest.api.model.ApiResponse;
 import com.reliaquest.api.model.CreateEmployeeInput;
 import com.reliaquest.api.model.DeleteEmployeeInput;
 import com.reliaquest.api.model.Employee;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
@@ -30,12 +28,7 @@ public class EmployeeService {
     }
 
     private <T> T getDataFromApi(String url, ParameterizedTypeReference<ApiResponse<T>> responseType) {
-        ResponseEntity<ApiResponse<T>> response = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                responseType
-        );
+        ResponseEntity<ApiResponse<T>> response = restTemplate.exchange(url, HttpMethod.GET, null, responseType);
         ApiResponse<T> apiResponse = response.getBody();
         if (apiResponse != null && apiResponse.getData() != null) {
             return apiResponse.getData();
@@ -45,11 +38,8 @@ public class EmployeeService {
     }
 
     public List<Employee> getAllEmployees() {
-        List<Employee> employees = getDataFromApi(
-                BASE_URL,
-                new ParameterizedTypeReference<ApiResponse<List<Employee>>>() {
-                }
-        );
+        List<Employee> employees =
+                getDataFromApi(BASE_URL, new ParameterizedTypeReference<ApiResponse<List<Employee>>>() {});
         if (employees == null || employees.isEmpty()) {
             log.warn("No employees found from API at URL: {}", BASE_URL);
         }
@@ -67,7 +57,8 @@ public class EmployeeService {
         String lowerSearch = searchString.toLowerCase();
 
         List<Employee> filtered = allEmployees.stream()
-                .filter(emp -> emp.getEmployeeName() != null && emp.getEmployeeName().toLowerCase().contains(lowerSearch))
+                .filter(emp -> emp.getEmployeeName() != null
+                        && emp.getEmployeeName().toLowerCase().contains(lowerSearch))
                 .collect(Collectors.toList());
 
         if (filtered.isEmpty()) {
@@ -81,11 +72,7 @@ public class EmployeeService {
         String url = BASE_URL + "/" + id;
 
         try {
-            Employee employee = getDataFromApi(
-                    url,
-                    new ParameterizedTypeReference<ApiResponse<Employee>>() {
-                    }
-            );
+            Employee employee = getDataFromApi(url, new ParameterizedTypeReference<ApiResponse<Employee>>() {});
             if (employee == null) {
                 log.warn("Employee with ID {} not found.", id);
             }
@@ -99,10 +86,7 @@ public class EmployeeService {
     public Integer getHighestSalary() {
         List<Employee> employees = getAllEmployees();
 
-        return employees.stream()
-                .mapToInt(Employee::getEmployeeSalary)
-                .max()
-                .orElse(0);
+        return employees.stream().mapToInt(Employee::getEmployeeSalary).max().orElse(0);
     }
 
     public List<String> getTop10HighestEarningEmployeeNames() {
@@ -122,11 +106,7 @@ public class EmployeeService {
     public Employee createEmployee(CreateEmployeeInput input) {
         HttpEntity<CreateEmployeeInput> request = new HttpEntity<>(input);
         ResponseEntity<ApiResponse<Employee>> response = restTemplate.exchange(
-                BASE_URL,
-                HttpMethod.POST,
-                request,
-                new ParameterizedTypeReference<ApiResponse<Employee>>() {}
-        );
+                BASE_URL, HttpMethod.POST, request, new ParameterizedTypeReference<ApiResponse<Employee>>() {});
 
         ApiResponse<Employee> apiResponse = response.getBody();
 
@@ -152,11 +132,7 @@ public class EmployeeService {
         HttpEntity<DeleteEmployeeInput> request = new HttpEntity<>(input);
 
         ResponseEntity<ApiResponse<Boolean>> response = restTemplate.exchange(
-                BASE_URL,
-                HttpMethod.DELETE,
-                request,
-                new ParameterizedTypeReference<ApiResponse<Boolean>>() {}
-        );
+                BASE_URL, HttpMethod.DELETE, request, new ParameterizedTypeReference<ApiResponse<Boolean>>() {});
 
         ApiResponse<Boolean> apiResponse = response.getBody();
 
@@ -169,5 +145,3 @@ public class EmployeeService {
         }
     }
 }
-
-
