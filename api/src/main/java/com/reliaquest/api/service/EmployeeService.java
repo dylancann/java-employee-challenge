@@ -91,6 +91,16 @@ public class EmployeeService {
             throw e;
         }
     }
+
+    public Integer getHighestSalary() {
+        List<Employee> employees = getAllEmployees();
+
+        return employees.stream()
+                .mapToInt(Employee::getEmployeeSalary)
+                .max()
+                .orElse(0);
+    }
+
 }
 
 
