@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -101,6 +102,19 @@ public class EmployeeService {
                 .orElse(0);
     }
 
+    public List<String> getTop10HighestEarningEmployeeNames() {
+        List<Employee> allEmployees = getAllEmployees();
+
+        if (allEmployees == null || allEmployees.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return allEmployees.stream()
+                .sorted(Comparator.comparing(Employee::getEmployeeSalary).reversed())
+                .limit(10)
+                .map(Employee::getEmployeeName)
+                .collect(Collectors.toList());
+    }
 }
 
 
