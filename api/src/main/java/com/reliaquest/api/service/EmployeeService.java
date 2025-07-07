@@ -1,8 +1,10 @@
 package com.reliaquest.api.service;
 
 import com.reliaquest.api.model.ApiResponse;
+import com.reliaquest.api.model.CreateEmployeeInput;
 import com.reliaquest.api.model.Employee;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -115,6 +117,28 @@ public class EmployeeService {
                 .map(Employee::getEmployeeName)
                 .collect(Collectors.toList());
     }
+
+    public Employee createEmployee(CreateEmployeeInput input) {
+        HttpEntity<CreateEmployeeInput> request = new HttpEntity<>(input);
+        ResponseEntity<ApiResponse<Employee>> response = restTemplate.exchange(
+                BASE_URL,
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<ApiResponse<Employee>>() {}
+        );
+
+        ApiResponse<Employee> apiResponse = response.getBody();
+
+        if (apiResponse != null && apiResponse.getData() != null) {
+            log.info("Successfully created employee: {}", apiResponse.getData());
+            return apiResponse.getData();
+        } else {
+            log.error("Failed to create employee: {}", response);
+            return null;
+        }
+    }
+
+
 }
 
 
