@@ -1,8 +1,8 @@
 package com.reliaquest.api.model;
 
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 public class CreateEmployeeInput {
     private String name;
     private Integer salary;

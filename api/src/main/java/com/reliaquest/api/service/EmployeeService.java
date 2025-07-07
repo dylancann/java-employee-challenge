@@ -2,6 +2,7 @@ package com.reliaquest.api.service;
 
 import com.reliaquest.api.model.ApiResponse;
 import com.reliaquest.api.model.CreateEmployeeInput;
+import com.reliaquest.api.model.DeleteEmployeeInput;
 import com.reliaquest.api.model.Employee;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -134,6 +135,36 @@ public class EmployeeService {
             return apiResponse.getData();
         } else {
             log.error("Failed to create employee: {}", response);
+            return null;
+        }
+    }
+
+    public String deleteEmployeeById(String id) {
+        Employee employee = getEmployeeById(id);
+        if (employee == null) {
+            log.warn("Employee with id {} not found for deletion", id);
+            return null;
+        }
+
+        DeleteEmployeeInput input = new DeleteEmployeeInput();
+        input.setName(employee.getEmployeeName());
+
+        HttpEntity<DeleteEmployeeInput> request = new HttpEntity<>(input);
+
+        ResponseEntity<ApiResponse<Boolean>> response = restTemplate.exchange(
+                BASE_URL,
+                HttpMethod.DELETE,
+                request,
+                new ParameterizedTypeReference<ApiResponse<Boolean>>() {}
+        );
+
+        ApiResponse<Boolean> apiResponse = response.getBody();
+
+        if (apiResponse != null && Boolean.TRUE.equals(apiResponse.getData())) {
+            log.info("Deleted employee: {}", employee.getEmployeeName());
+            return employee.getEmployeeName();
+        } else {
+            log.error("Failed to delete employee: {}", employee.getEmployeeName());
             return null;
         }
     }
